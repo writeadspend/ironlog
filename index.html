@@ -3,17 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- PWA core -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0f0e0d">
+
+<!-- Android -->
 <meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS (Safari) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="IronLog">
-<meta name="theme-color" content="#0f0e0d">
-<meta name="description" content="Your personal strength training tracker">
-<link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icon-192.png">
-<title>IronLog</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="apple-touch-icon" href="./icon-180.png">
+
+<!-- SEO / share -->
+<meta name="description" content="Personal strength training tracker — progressive overload, stall detection, session history.">
 <title>IronLog</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -587,20 +592,22 @@ init();
 </script>
 
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('IronLog SW registered:', reg.scope))
-      .catch(err => console.log('SW error:', err));
-  });
-}
-// Prevent double-tap zoom on Android
-let lastTap = 0;
-document.addEventListener('touchend', function(e) {
-  const now = Date.now();
-  if (now - lastTap < 300) e.preventDefault();
-  lastTap = now;
-}, { passive: false });
+  // Register service worker for offline support
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(r => console.log('[IronLog] SW registered, scope:', r.scope))
+        .catch(e => console.warn('[IronLog] SW failed:', e));
+    });
+  }
+
+  // Prevent double-tap zoom on Android (feels more native)
+  let _lastTap = 0;
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - _lastTap < 300) e.preventDefault();
+    _lastTap = now;
+  }, { passive: false });
 </script>
 
 </body>
